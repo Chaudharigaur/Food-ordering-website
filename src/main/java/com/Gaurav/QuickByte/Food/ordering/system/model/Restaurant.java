@@ -1,13 +1,15 @@
 package com.Gaurav.QuickByte.Food.ordering.system.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -18,19 +20,39 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String owner;
+
+    @OneToOne
+    private Users owner;
+
+    private String name;
+
     private String description;
     private String cuisineType;
-    private List<String> address;
-    private Long contactInformation;
-    private Date openingHour;
+
+    @OneToOne
+    private Address address;
+
+    @Embedded
+    private  ContactInformation contactInformation;
+
+    private String openingHour;
     private String reviews;
-    private String orders;
+
+    @OneToMany(mappedBy = "restaurant" ,cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Orders> orders=new ArrayList<>();
+
     private Long numRating;
-    private byte[] images;
-    private Date registarationDate;
+
+    @ElementCollection
+    @Column(length=1000)
+    private List<String> images;
+
+    private LocalDateTime registarationDate;
     private boolean open;
-    private String foods;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL)
+    private List<Food> foods=new ArrayList<>();
 
 
 }
